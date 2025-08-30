@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-generator-test
+  namespace: hello
+  labels:
+    app: log-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-generator
+  template:
+    metadata:
+      labels:
+        app: log-generator
+    spec:
+      containers:
+      - name: log-generator
+        image: quay.kyndryl.tw/ileven/busybox
+        command: ["/bin/sh"]
+        args:
+        - "-c"
+        - |
+        - |
+          HOSTNAME=$(hostname)
+          APP_NAME="log-test-app"
+          POD_NAME=$(hostname)
+
+          echo "Starting log generation..."
+
+          while true; do
+            TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000000000Z")
+
+            case $((RANDOM % 4)) in
+              0) MESSAGE="[Consumer clientId=hello-listener-client-0, groupId=hello-group] Adding newly assigned partitions: kevin-topic-0, kevin-topic-1"
+                 LOGGER="org.apache.kafka.clients.consumer.internals.ConsumerRebalanceListenerInvoker"
+                 THREAD="org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+              1) MESSAGE="Setting offset for partition kevin-topic-0 to the committed offset FetchPosition{offset=2, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[kraft-node-pool-1.kraft-kafka-brokers.kraft.svc:9093 (id: 1 rack: null)], epoch=0}}"
+                 LOGGER="org.apache.kafka.clients.consumer.internals.ConsumerUtils"
+                 THREAD="org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+              2) MESSAGE="Processing message from partition kevin-topic-0, offset: 150"
+                 LOGGER="com.example.service.UserService"
+                 THREAD="http-nio-8080-exec-1"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+              3) MESSAGE="HTTP request processed: GET /api/users/123 - Status: 200, Duration: 45ms"
+                 LOGGER="com.example.controller.UserController"
+                 THREAD="http-nio-8080-exec-2"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+            esac
+
+            echo "{\"@timestamp\":\"$TIMESTAMP\",\"@version\":\"1\",\"message\":\"$MESSAGE\",\"logger_name\":\"$LOGGER\",\"thread_name\":\"$THREAD\",\"level\":\"$LEVEL\",\"level_value\":$LEVEL_VALUE,\"HOSTNAME\":\"$HOSTNAME\",\"applicationName\":\"$APP_NAME\",\"podName\":\"$POD_NAME\"}"
+
+            sleep 3
+          done
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      restartPolicy: Always
+"hello.yaml" 68L, 2768B                                                                                                                                                                   68,27         Bot
+          HOSTNAME=$(hostname)
+          APP_NAME="log-test-app"
+          POD_NAME=$(hostname)
+
+          echo "Starting log generation..."
+
+          while true; do
+            TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000000000Z")
+
+            case $((RANDOM % 4)) in
+              0) MESSAGE="[Consumer clientId=hello-listener-client-0, groupId=hello-group] Adding newly assigned partitions: kevin-topic-0, kevin-topic-1"
+                 LOGGER="org.apache.kafka.clients.consumer.internals.ConsumerRebalanceListenerInvoker"
+                 THREAD="org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+              1) MESSAGE="Setting offset for partition kevin-topic-0 to the committed offset FetchPosition{offset=2, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[kraft-node-pool-1.kraft-kafka-brokers.kraft.svc:9093 (id: 1 rack: null)], epoch=0}}"
+                 LOGGER="org.apache.kafka.clients.consumer.internals.ConsumerUtils"
+                 THREAD="org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+              2) MESSAGE="Processing message from partition kevin-topic-0, offset: 150"
+                 LOGGER="com.example.service.UserService"
+                 THREAD="http-nio-8080-exec-1"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+              3) MESSAGE="HTTP request processed: GET /api/users/123 - Status: 200, Duration: 45ms"
+                 LOGGER="com.example.controller.UserController"
+                 THREAD="http-nio-8080-exec-2"
+                 LEVEL="INFO"
+                 LEVEL_VALUE=20000 ;;
+            esac
+
+            echo "{\"@timestamp\":\"$TIMESTAMP\",\"@version\":\"1\",\"message\":\"$MESSAGE\",\"logger_name\":\"$LOGGER\",\"thread_name\":\"$THREAD\",\"level\":\"$LEVEL\",\"level_value\":$LEVEL_VALUE,\"HOSTNAME\":\"$HOSTNAME\",\"applicationName\":\"$APP_NAME\",\"podName\":\"$POD_NAME\"}"
+
+            sleep 3
+          done
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      restartPolicy: Always
